@@ -52,3 +52,30 @@ class FilterCriteria:
             return where_clause, tuple(params)
         else:
             return "", ()
+        
+    def apply_pandas(self, df) -> "pd.DataFrame":
+        """
+        Apply filtering criteria to a pandas DataFrame.
+
+        Args:
+            df: Input DataFrame with columns: country_code, report_date, etc.
+
+        Returns:
+            Filtered DataFrame.
+        """
+        import pandas as pd
+        
+        result = df.copy()
+
+        # Filter by country
+        if self.country:
+            result = result[result["country_code"] == self.country]
+
+        # Filter by date range
+        if self.date_from:
+            result = result[result["report_date"] >= self.date_from]
+
+        if self.date_to:
+            result = result[result["report_date"] <= self.date_to]
+
+        return result
