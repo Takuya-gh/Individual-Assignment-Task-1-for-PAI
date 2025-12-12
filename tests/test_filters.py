@@ -48,6 +48,40 @@ class TestFilterCriteria(unittest.TestCase):
         self.assertEqual(where_clause, "")
         self.assertEqual(len(params), 0)
 
+    def test_apply_pandas_filters_by_country(self):
+        """Test apply_pandas() filters DataFrame by country."""
+        import pandas as pd
+        
+        df = pd.DataFrame([
+            {"country_code": "ABW", "report_date": "2020-01-01", "value": 64.0},
+            {"country_code": "AFG", "report_date": "2020-01-01", "value": 32.0},
+            {"country_code": "ABW", "report_date": "2021-01-01", "value": 65.0}
+        ])
+
+        filters = FilterCriteria(country="ABW")
+        result = filters.apply_pandas(df)
+
+        # Should return 2 rows (both ABW)
+        self.assertEqual(len(result), 2)
+        self.assertTrue((result["country_code"] == "ABW").all())
+    
+    def test_apply_pandas_filters_by_date_range(self):
+        """Test apply_pandas() filters DataFrame by date range."""
+        import pandas as pd
+        
+        df = pd.DataFrame([
+            {"country_code": "ABW", "report_date": "2019-01-01", "value": 63.0},
+            {"country_code": "ABW", "report_date": "2020-01-01", "value": 64.0},
+            {"country_code": "ABW", "report_date": "2025-01-01", "value": 66.0}
+        ])
+
+        filters = FilterCriteria(date_from="2020-01-01", date_to="2024-12-31")
+        result = filters.apply_pandas(df)
+
+        # Should return 1 row (only 2020)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result.iloc[0]["report_date"], "2020-01-01")
+
 
 if __name__ == '__main__':
     unittest.main()
