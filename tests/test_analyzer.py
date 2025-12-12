@@ -32,6 +32,26 @@ class TestAnalyzer(unittest.TestCase):
         self.assertEqual(result["max"], 64.0)
         self.assertEqual(result["count"], 3)
 
+    def test_trend_over_time_groups_by_date(self):
+        """Test that trend_over_time() groups and sorts by date."""
+        df = pd.DataFrame({
+            "report_date": ["2020-01-01", "2021-01-01", "2020-01-01", "2021-01-01"],
+            "value": [64.0, 65.0, 32.0, 33.0]
+        })
+
+        result = self.analyzer.trend_over_time(df, date_col="report_date", value_col="value")
+
+        # Should have 2 rows (one per unique date)
+        self.assertEqual(len(result), 2)
+
+        # Should be sorted by date
+        self.assertEqual(result.iloc[0]["report_date"], "2020-01-01")
+        self.assertEqual(result.iloc[1]["report_date"], "2021-01-01")
+
+        # Should have mean values
+        self.assertAlmostEqual(result.iloc[0]["value"], 48.0)  # mean of 64.0 and 32.0
+        self.assertAlmostEqual(result.iloc[1]["value"], 49.0)  # mean of 65.0 and 33.0
+
 
 if __name__ == '__main__':
     unittest.main()
