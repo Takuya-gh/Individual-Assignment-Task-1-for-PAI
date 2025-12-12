@@ -44,6 +44,45 @@ class TestDatabaseRepository(unittest.TestCase):
         self.assertIn("indicators", tables)
         self.assertIn("reports", tables)
 
+    def test_save_reports_inserts_data(self):
+        """Test that save_reports() inserts data into all tables."""
+        import pandas as pd
+        
+        self.repo.connect()
+        self.repo.init_schema()
+
+        # Create sample DataFrame with normalized schema
+        df = pd.DataFrame([
+            {"country_code": "ABW", "country_name": "Aruba", 
+            "indicator_code": "SP.DYN.LE00.IN", "indicator_name": "Life expectancy",
+            "report_date": "1960-01-01", "value": 64.049},
+            {"country_code": "ABW", "country_name": "Aruba",
+            "indicator_code": "SP.DYN.LE00.IN", "indicator_name": "Life expectancy",
+            "report_date": "1961-01-01", "value": 64.215},
+            {"country_code": "AFG", "country_name": "Afghanistan",
+            "indicator_code": "SP.DYN.LE00.IN", "indicator_name": "Life expectancy",
+            "report_date": "1960-01-01", "value": 32.799}
+        ])
+
+        # Save reports
+        row_count = self.repo.save_reports(df)
+
+        # Should return 3 (number of report rows inserted)
+        self.assertEqual(row_count, 3)
+
+        # Verify countries table has 2 rows
+        cursor = self.repo.conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM countries")
+        self.assertEqual(cursor.fetchone()[0], 2)
+
+        # Verify indicators table has 1 row
+        cursor.execute("SELECT COUNT(*) FROM indicators")
+        self.assertEqual(cursor.fetchone()[0], 1)
+
+        # Verify reports table has 3 rows
+        cursor.execute("SELECT COUNT(*) FROM reports")
+        self.assertEqual(cursor.fetchone()[0], 3)
+
 
 if __name__ == '__main__':
     unittest.main()
