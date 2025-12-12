@@ -42,6 +42,32 @@ class TestDataCleaner(unittest.TestCase):
         # Assert value column is numeric (empty strings become NaN)
         self.assertTrue(pd.api.types.is_numeric_dtype(result["value"]))
 
+    def test_handle_missing_drop_strategy(self):
+        """Test handle_missing with 'drop' strategy removes rows with NaN."""
+        df = pd.DataFrame({
+            "country_code": ["ABW", "AFG", "ALB"],
+            "value": [64.0, None, 58.0]
+        })
+
+        result = self.cleaner.handle_missing(df, strategy="drop")
+
+        # Should have 2 rows (AFG row dropped)
+        self.assertEqual(len(result), 2)
+        self.assertListEqual(list(result["country_code"]), ["ABW", "ALB"])
+
+    def test_handle_missing_fill_zero_strategy(self):
+        """Test handle_missing with 'fill_zero' strategy replaces NaN with 0."""
+        df = pd.DataFrame({
+            "country_code": ["ABW", "AFG", "ALB"],
+            "value": [64.0, None, 58.0]
+        })
+
+        result = self.cleaner.handle_missing(df, strategy="fill_zero")
+
+        # Should have 3 rows, with AFG value = 0
+        self.assertEqual(len(result), 3)
+        self.assertEqual(result.loc[1, "value"], 0.0)
+
 
 if __name__ == '__main__':
     unittest.main()
