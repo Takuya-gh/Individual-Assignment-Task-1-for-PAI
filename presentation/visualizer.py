@@ -22,3 +22,49 @@ class Visualizer:
         print("=" * 80)
         print(f"Total rows: {len(df)}")
         print()
+
+    def plot_line(self, df: pd.DataFrame, x: str, y: str, title: str) -> Figure:
+        """
+        Create a line plot.
+
+        Args:
+            df: DataFrame to plot.
+            x: Column name for x-axis.
+            y: Column name for y-axis.
+            title: Plot title.
+
+        Returns:
+            Matplotlib Figure object.
+        """
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.plot(df[x], df[y], marker='o', linewidth=2)
+        ax.set_xlabel(x)
+        ax.set_ylabel(y)
+        ax.set_title(title)
+        ax.grid(True, alpha=0.3)
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        return fig
+
+    def plot_bar(self, df: pd.DataFrame, x: str, y: str, title: str) -> Figure:
+        """
+        Create a bar plot.
+
+        Args:
+            df: DataFrame to plot.
+            x: Column name for x-axis.
+            y: Column name for y-axis.
+            title: Plot title.
+
+        Returns:
+            Matplotlib Figure object.
+        """
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.bar(df[x], df[y], color='steelblue')
+        ax.set_xlabel(x)
+        ax.set_ylabel(y)
+        ax.set_title(title)
+        ax.grid(True, alpha=0.3, axis='y')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        return fig
