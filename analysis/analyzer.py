@@ -25,3 +25,24 @@ class Analyzer:
             "max": float(stats["max"]),
             "count": int(stats["count"])
         }
+    
+    def trend_over_time(self, df: pd.DataFrame, date_col: str = "report_date", 
+                   value_col: str = "value") -> pd.DataFrame:
+        """
+        Calculate trend over time (mean value per date).
+
+        Args:
+            df: Input DataFrame.
+            date_col: Name of the date column.
+            value_col: Name of the value column.
+
+        Returns:
+            DataFrame with columns [date_col, value_col], sorted by date.
+        """
+        # Group by date and calculate mean
+        trend = df.groupby(date_col)[value_col].mean().reset_index()
+        
+        # Sort by date
+        trend = trend.sort_values(by=date_col)
+        
+        return trend
