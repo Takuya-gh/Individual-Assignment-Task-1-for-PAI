@@ -53,3 +53,25 @@ class DataCleaner:
             return df_long
         else:
             raise ValueError(f"Unknown dataset type: {dataset}")
+        
+    def handle_missing(self, df: pd.DataFrame, strategy: str = "drop") -> pd.DataFrame:
+        """
+        Handle missing values in the DataFrame.
+
+        Args:
+            df: Input DataFrame.
+            strategy: Strategy to handle missing values:
+                    - "drop": Remove rows with missing values
+                    - "fill_zero": Replace missing numeric values with 0
+
+        Returns:
+            DataFrame with missing values handled.
+        """
+        if strategy == "drop":
+            # Drop rows with any missing values
+            return df.dropna()
+        elif strategy == "fill_zero":
+            # Fill missing numeric values with 0
+            return df.fillna(0)
+        else:
+            raise ValueError(f"Unknown strategy: {strategy}")
