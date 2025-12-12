@@ -68,6 +68,35 @@ class TestDataCleaner(unittest.TestCase):
         self.assertEqual(len(result), 3)
         self.assertEqual(result.loc[1, "value"], 0.0)
 
+    def test_convert_types_float_conversion(self):
+        """Test convert_types converts string values to float."""
+        df = pd.DataFrame({
+            "country_code": ["ABW", "AFG"],
+            "value": ["64.049", "32.799"]
+        })
+
+        type_map = {"value": "float"}
+        result = self.cleaner.convert_types(df, type_map)
+
+        # value column should be float type
+        self.assertTrue(pd.api.types.is_float_dtype(result["value"]))
+        self.assertAlmostEqual(result.loc[0, "value"], 64.049)
+
+    def test_convert_types_keeps_text_dates(self):
+        """Test convert_types keeps report_date as TEXT in ISO format."""
+        df = pd.DataFrame({
+            "report_date": ["1960-01-01", "1961-01-01"],
+            "value": ["64.049", "32.799"]
+        })
+
+        type_map = {"value": "float"}
+        result = self.cleaner.convert_types(df, type_map)
+
+        # report_date should remain as string (TEXT)
+        self.assertTrue(pd.api.types.is_string_dtype(result["report_date"]) or 
+                        pd.api.types.is_object_dtype(result["report_date"]))
+        self.assertEqual(result.loc[0, "report_date"], "1960-01-01")
+
 
 if __name__ == '__main__':
     unittest.main()
