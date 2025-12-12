@@ -83,3 +83,66 @@ class DatabaseRepository:
         """)
 
         self.conn.commit()
+
+    def save_reports(self, df: pd.DataFrame) -> int:
+        """
+        Save reports DataFrame to database.
+
+        Expected DataFrame columns:
+        - country_code, country_name, indicator_code, indicator_name, report_date, value
+
+        Args:
+            df: DataFrame with normalized schema.
+
+        Returns:
+            Number of report rows inserted.
+        """
+        if not self.conn:
+            raise RuntimeError("Database not connected. Call connect() first.")
+
+        cursor = self.conn.cursor()
+
+        try:
+            cursor.execute("BEGIN TRANSACTION;")
+
+            # 1. Insert unique countries
+            countries = df[["country_code", "country_name"]].drop_duplicates()
+            for _, row in countries.iterrows():
+                cursor.execute("""
+                    INSERT OR IGNORE INTO countries (country_code, country_name, region)
+                    VALUES (?, ?, NULL);
+                """, (row["country_code"], row["country_name"]))
+
+            # 2. Insert unique indicators
+            indicators = df[["indicator_code", "indicator_name"]].drop_duplicates()
+            for _, row in indicators.iterrows():
+                cursor.execute("""
+                    INSERT OR IGNORE INTO indicators (indicator_code, indicator_name, category)
+                    VALUES (?, ?, NULL);
+                """, (row["indicator_code"], row["indicator_name"]))
+
+            # 3. Insert reports
+            report_count = 0
+            for _, row in df.iterrows():
+                # Lookup indicator_id
+                cursor.execute("""
+                    SELECT indicator_id FROM indicators WHERE indicator_code = ?;
+                """, (row["indicator_code"],))
+                indicator_id = cursor.fetchone()[0]
+
+                # Convert report_date to string if needed
+                report_date = str(row["report_date"])
+
+                # Insert report
+                cursor.execute("""
+                    INSERT INTO reports (country_code, indicator_id, report_date, value)
+                    VALUES (?, ?, ?, ?);
+                """, (row["country_code"], indicator_id, report_date, row["value"]))
+                report_count += 1
+
+            cursor.execute("COMMIT;")
+            return report_count
+
+        except Exception as e:
+            cursor.execute("ROLLBACK;")
+            raise
