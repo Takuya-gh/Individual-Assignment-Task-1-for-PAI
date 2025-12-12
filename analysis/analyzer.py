@@ -46,3 +46,21 @@ class Analyzer:
         trend = trend.sort_values(by=date_col)
         
         return trend
+    
+    def group_aggregate(self, df: pd.DataFrame, group_cols: list, 
+                    agg_col: str = "value") -> pd.DataFrame:
+        """
+        Group by specified columns and aggregate.
+
+        Args:
+            df: Input DataFrame.
+            group_cols: List of column names to group by.
+            agg_col: Column name to aggregate (default: mean).
+
+        Returns:
+            DataFrame with grouped results.
+        """
+        # Group by specified columns and calculate mean
+        result = df.groupby(group_cols)[agg_col].mean().reset_index()
+        
+        return result
