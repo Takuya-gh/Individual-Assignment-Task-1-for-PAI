@@ -27,6 +27,10 @@ class CSVDataSource:
             if not os.path.exists(self.file_path):
                 return False
             
+            # Check if file is not empty
+            if os.path.getsize(self.file_path) == 0:
+                return False
+            
             # Try reading the file
             pd.read_csv(self.file_path, skiprows=2, nrows=0)
             return True
