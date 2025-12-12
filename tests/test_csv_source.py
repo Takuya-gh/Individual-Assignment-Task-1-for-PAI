@@ -38,7 +38,7 @@ class TestCSVDataSource(unittest.TestCase):
 
     def test_validate_returns_false_for_empty_file(self):
         """Test that validate() returns False for empty file."""
-        empty_file_path = "tests/data/empty.csv"
+        empty_file_path = "data/empty.csv"
         # Create empty file
         open(empty_file_path, 'w').close()
         source = CSVDataSource(empty_file_path)
