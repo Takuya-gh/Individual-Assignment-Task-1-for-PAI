@@ -75,3 +75,30 @@ class DataCleaner:
             return df.fillna(0)
         else:
             raise ValueError(f"Unknown strategy: {strategy}")
+        
+    def convert_types(self, df: pd.DataFrame, type_map: dict) -> pd.DataFrame:
+        """
+        Convert column data types according to type_map.
+
+        Args:
+            df: Input DataFrame.
+            type_map: Dictionary mapping column names to target types.
+                    Supported types: "float", "int"
+
+        Returns:
+            DataFrame with converted types.
+        """
+        df_converted = df.copy()
+
+        for col, target_type in type_map.items():
+            if col not in df_converted.columns:
+                continue
+
+            if target_type == "float":
+                df_converted[col] = pd.to_numeric(df_converted[col], errors='coerce')
+            elif target_type == "int":
+                df_converted[col] = pd.to_numeric(df_converted[col], errors='coerce').astype('Int64')
+            else:
+                raise ValueError(f"Unknown type: {target_type}")
+
+        return df_converted
