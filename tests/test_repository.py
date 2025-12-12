@@ -83,6 +83,34 @@ class TestDatabaseRepository(unittest.TestCase):
         cursor.execute("SELECT COUNT(*) FROM reports")
         self.assertEqual(cursor.fetchone()[0], 3)
 
+    def test_query_reports_returns_dataframe(self):
+        """Test that query_reports() returns filtered data as DataFrame."""
+        import pandas as pd
+        
+        self.repo.connect()
+        self.repo.init_schema()
+
+        # Insert sample data
+        df = pd.DataFrame([
+            {"country_code": "ABW", "country_name": "Aruba", 
+            "indicator_code": "SP.DYN.LE00.IN", "indicator_name": "Life expectancy",
+            "report_date": "1960-01-01", "value": 64.049},
+            {"country_code": "AFG", "country_name": "Afghanistan",
+            "indicator_code": "SP.DYN.LE00.IN", "indicator_name": "Life expectancy",
+            "report_date": "1960-01-01", "value": 32.799}
+        ])
+        self.repo.save_reports(df)
+
+        # Query for ABW only
+        result = self.repo.query_reports(
+            "SELECT * FROM reports WHERE country_code = ?",
+            ("ABW",)
+        )
+
+        # Should return 1 row
+        self.assertEqual(len(result), 1)
+        self.assertIsInstance(result, pd.DataFrame)
+
 
 if __name__ == '__main__':
     unittest.main()
