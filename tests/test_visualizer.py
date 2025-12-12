@@ -24,6 +24,36 @@ class TestVisualizer(unittest.TestCase):
         except Exception as e:
             self.fail(f"show_table raised {type(e).__name__}: {e}")
 
+    def test_plot_line_returns_figure(self):
+        """Test that plot_line() returns a matplotlib Figure."""
+        df = pd.DataFrame({
+            "report_date": ["2020-01-01", "2021-01-01", "2022-01-01"],
+            "value": [64.0, 65.0, 66.0]
+        })
+
+        fig = self.visualizer.plot_line(df, x="report_date", y="value", title="Test Line Plot")
+
+        # Should return a Figure object
+        self.assertIsNotNone(fig)
+        # Close figure to avoid memory leak
+        import matplotlib.pyplot as plt
+        plt.close(fig)
+
+    def test_plot_bar_returns_figure(self):
+        """Test that plot_bar() returns a matplotlib Figure."""
+        df = pd.DataFrame({
+            "country_code": ["ABW", "AFG", "ALB"],
+            "value": [64.0, 32.0, 58.0]
+        })
+
+        fig = self.visualizer.plot_bar(df, x="country_code", y="value", title="Test Bar Plot")
+
+        # Should return a Figure object
+        self.assertIsNotNone(fig)
+        # Close figure to avoid memory leak
+        import matplotlib.pyplot as plt
+        plt.close(fig)
+
 
 if __name__ == '__main__':
     unittest.main()
