@@ -146,3 +146,21 @@ class DatabaseRepository:
         except Exception as e:
             cursor.execute("ROLLBACK;")
             raise
+
+    def query_reports(self, sql: str, params: tuple = ()) -> pd.DataFrame:
+        """
+        Execute a SQL query and return results as DataFrame.
+
+        Args:
+            sql: SQL query string (use ? for parameters).
+            params: Tuple of parameter values for the query.
+
+        Returns:
+            DataFrame containing query results.
+        """
+        if not self.conn:
+            raise RuntimeError("Database not connected. Call connect() first.")
+
+        # Execute query and fetch results
+        df = pd.read_sql_query(sql, self.conn, params=params)
+        return df
