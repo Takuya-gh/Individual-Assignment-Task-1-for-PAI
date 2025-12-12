@@ -30,6 +30,28 @@ class TestCSVDataSource(unittest.TestCase):
         df = source.load()
         # Sample CSV has 3 data rows (after skipping 2 metadata rows and 1 header row)
         self.assertEqual(len(df), 4)
+    
+    def test_validate_returns_false_for_nonexistent_file(self):
+        """Test that validate() returns False for non-existent file."""
+        source = CSVDataSource(self.missing_file_path)
+        self.assertFalse(source.validate())
+
+    def test_validate_returns_false_for_empty_file(self):
+        """Test that validate() returns False for empty file."""
+        empty_file_path = "tests/data/empty.csv"
+        # Create empty file
+        open(empty_file_path, 'w').close()
+        source = CSVDataSource(empty_file_path)
+        self.assertFalse(source.validate())
+        # Clean up
+        import os
+        os.remove(empty_file_path)
+
+    def test_load_raises_valueerror_for_nonexistent_file(self):
+        """Test that load() raises ValueError for non-existent file."""
+        source = CSVDataSource(self.missing_file_path)
+        with self.assertRaises(ValueError):
+            source.load()
 
 
 if __name__ == '__main__':
