@@ -32,7 +32,7 @@ class CSVDataSource:
                 return False
             
             # Try reading the file
-            pd.read_csv(self.file_path, skiprows=2, nrows=0)
+            pd.read_csv(self.file_path, skiprows=4, nrows=0)
             return True
         except Exception:
             return False
@@ -52,6 +52,6 @@ class CSVDataSource:
         if not self.validate():
             raise ValueError(f"Cannot load CSV file: {self.file_path}")
         
-        # Load CSV with skiprows=2 to skip World Bank metadata rows
+        # Load CSV with skiprows=4 to skip World Bank metadata rows
         df = pd.read_csv(self.file_path, skiprows=4)
         return df
