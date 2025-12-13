@@ -28,8 +28,8 @@ class TestCSVDataSource(unittest.TestCase):
         """Test that load() returns correct number of data rows."""
         source = CSVDataSource(self.sample_csv_path)
         df = source.load()
-        # Sample CSV has 3 data rows (after skipping 2 metadata rows and 1 header row)
-        self.assertEqual(len(df), 4)
+        # Sample CSV has 3 data rows (after skipping 4 metadata rows: 2 metadata + 2 blank)
+        self.assertEqual(len(df), 3)
     
     def test_validate_returns_false_for_nonexistent_file(self):
         """Test that validate() returns False for non-existent file."""
