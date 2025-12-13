@@ -18,6 +18,14 @@ class DataCleaner:
             [country_code, country_name, indicator_code, indicator_name, report_date, value]
         """
         if dataset == "world_bank":
+            # Strip whitespace from column names
+            df.columns = df.columns.str.strip()
+            
+            # Check if required columns exist
+            required_cols = ["Country Name", "Country Code", "Indicator Name", "Indicator Code"]
+            if not all(col in df.columns for col in required_cols):
+                raise ValueError(f"Missing required columns. Found: {list(df.columns)}")
+            
             # Identify year columns (columns that can be parsed as integers)
             year_columns = [col for col in df.columns if col.isdigit()]
 

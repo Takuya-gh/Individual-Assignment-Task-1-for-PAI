@@ -41,7 +41,7 @@ class CSVDataSource:
         """
         Load CSV file into a pandas DataFrame.
 
-        Skips the first 2 metadata rows of World Bank CSV format.
+        Skips the first 4 metadata rows of World Bank CSV format.
 
         Returns:
             DataFrame containing the CSV data.
@@ -53,5 +53,5 @@ class CSVDataSource:
             raise ValueError(f"Cannot load CSV file: {self.file_path}")
         
         # Load CSV with skiprows=2 to skip World Bank metadata rows
-        df = pd.read_csv(self.file_path, skiprows=2)
+        df = pd.read_csv(self.file_path, skiprows=4)
         return df
