@@ -69,7 +69,7 @@ class CLIController:
         """Handle CSV import."""
         csv_path = input("Enter CSV file path (or press Enter for default): ").strip()
         if not csv_path:
-            csv_path = "Plan/API_SP.DYN.LE00.IN_DS2_en_csv_v2_2505.csv"
+            csv_path = "data/raw/API_SP.DYN.LE00.IN_DS2_en_csv_v2_2505.csv"
 
         try:
             print(f"Loading CSV from: {csv_path}")
